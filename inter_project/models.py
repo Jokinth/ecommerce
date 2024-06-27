@@ -1,0 +1,28 @@
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
+from database import Base  # Assuming Base is your SQLAlchemy Base object
+
+class User(Base):
+    __tablename__ = 'user'
+
+    uid = Column(Integer, primary_key=True, index=True)
+    user_name = Column(String(50) ,unique=False)
+    email = Column(String(100),  index=True)
+    password = Column(String(150))
+    mobile_number = Column(String(15))
+    role = Column(String(20))  # Assuming role as string for simplicity
+    token = Column(String(100))
+
+    addresses = relationship("Address", back_populates="user" , primaryjoin="User.uid == Address.user_id")
+
+class Address(Base):
+    __tablename__ = 'address'
+
+    address_id = Column(Integer, primary_key=True, index=True)
+    street = Column(String(100))
+    city = Column(String(50))
+    state = Column(String(50))
+    country = Column(String(50))
+    user_id = Column(Integer, ForeignKey('user.uid'))  # Define foreign key here
+
+    user = relationship("User", back_populates="addresses" , primaryjoin="User.uid == Address.user_id")
