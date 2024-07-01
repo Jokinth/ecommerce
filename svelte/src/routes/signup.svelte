@@ -50,7 +50,8 @@ let  address = {
       }
       const data = await response.json();
       localStorage.setItem('userID', data.user_id);
-      replace('/home');
+      //if(data.role == "u"){
+      replace(`/home`);
 
     } catch (error) {
       console.error('Error signing up:', error);

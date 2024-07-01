@@ -8,28 +8,15 @@
         mobile_number : ""
     }
     let currentUserID = localStorage.getItem('userID') ;
-   // let currentUserID = parseInt(currentUserID1, 10);
     $: currentUserID = currentUserID;
     let user_address = [];
 
-    function name_edit(){
-      replace('/profile/edit_name');
-    }
-
-    function email_edit(){
-      replace('/profile/edit_email');
-    }
-
-    function mobile_edit(){
-      replace('/profile/edit_mobile');
-    }
-
-    function pass_edit(){
-      replace('/profile/edit_pass');
-    }
-
     function add_address(){
-      replace('/profile/add_address');
+      replace('/add_address');
+    }
+
+function edit(){
+      replace('/edit');
     }
 
     async function always_run(){
@@ -69,12 +56,19 @@
     always_run();
 </script>
 <Nav />
+<form on:submit={edit}>
+  <table style="margin-left: auto; margin-right : auto;">
+    <tr><th>NAME : </th><th>{user.name}</th></tr>
+    <tr><th>E-MAIL : </th><th>{user.email}</th> </tr>
+    <tr><th>MOBILE NUMBER : </th><th>{user.mobile_number}</th> </tr>
+    <tr><th>change password : </th><th>******</th></tr>
+    <tr> <th colspan="2" align="right">
+      <input type="submit" value="edit"></th></tr>
+    </table>
+    </form>
+    
 <form>
   <table style="margin-left: auto; margin-right : auto;">
-    <tr><th>NAME : </th><th>{user.name}</th> <th><button on:click={name_edit}>edit</button></th></tr>
-    <tr><th>E-MAIL : </th><th>{user.email}</th> <th><button on:click={email_edit}>edit</button></th> </tr>
-    <tr><th>MOBILE NUMBER : </th><th>{user.mobile_number}</th> <th><button on:click={mobile_edit} >edit</button></th> </tr>
-    <tr><th>change password : </th><th><button on:click={pass_edit}>change password</button></th></tr>
     <tr><th>adresses:</th>
       <th>
         <ol>

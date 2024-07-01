@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Base  # Assuming Base is your SQLAlchemy Base object
+from typing import Optional
 
 class User(Base):
     __tablename__ = 'user'
@@ -26,3 +27,15 @@ class Address(Base):
     user_id = Column(Integer, ForeignKey('user.uid'))  # Define foreign key here
 
     user = relationship("User", back_populates="addresses" , primaryjoin="User.uid == Address.user_id")
+
+
+class Product(Base):
+    __tablename__ = 'product'
+
+    pid = Column(Integer, primary_key=True, autoincrement=True)
+    pname = Column(String(100), nullable=False)
+    price = Column(Integer, nullable=False)
+    quantity_available = Column(Integer, nullable=False)
+    category = Column(String(50))
+    brand = Column(String(30))
+    description = Column(String(250))

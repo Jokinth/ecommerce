@@ -41,7 +41,13 @@
         }
         else{
       localStorage.setItem('userID', data.user_ID);
-      replace(`/home`);}}
+      if(data.role == "u"){
+        localStorage.setItem('user', 'u');}
+      else{
+        localStorage.setItem('user', 'a');
+      }
+      replace('/home');
+    }}
 
     } catch (error) {
       console.error('Error signing up:', error);
