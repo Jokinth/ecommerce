@@ -9,6 +9,7 @@
     }
     let currentUserID = localStorage.getItem('userID') ;
     $: currentUserID = currentUserID;
+    const token = localStorage.getItem('token');
     let user_address = [];
 
     function add_address(){
@@ -20,27 +21,32 @@ function edit(){
     }
 
     async function always_run(){
+      try {
+  const response = await fetch('http://127.0.0.1:8000/get_user', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+
+  const data = await response.json();
+  user = data;
+} catch (error) {
+  console.error('Error fetching user data:', error);
+}
+
+    
     try{
-    let response = await fetch(`http://127.0.0.1:8000/get_user/${currentUserID}`, {
+    let response = await fetch(`http://127.0.0.1:8000/get_address`, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-       let data = await response.json();
-       user = data;
-    }
-    catch (error) {
-      console.error( error);
-    }
-    try{
-    let response = await fetch(`http://127.0.0.1:8000/get_address/${currentUserID}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         }
       });
       if (!response.ok) {

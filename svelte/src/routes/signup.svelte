@@ -49,14 +49,11 @@ let  address = {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-      localStorage.setItem('user_id', data.user_id);
-      if(data.role == "u"){
-        localStorage.setItem('user', 'u');}
-      else{
-        localStorage.setItem('user', 'a');
-      }
+// Store the token and user information securely
+localStorage.setItem('token', data.access_token);
+localStorage.setItem('userID', data.user_ID);
+localStorage.setItem('role', data.role);
       replace(`/home`);
-
     } catch (error) {
       console.error('Error signing up:', error);
     }

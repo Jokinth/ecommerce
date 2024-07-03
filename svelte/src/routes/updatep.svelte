@@ -2,6 +2,7 @@
     import {replace} from 'svelte-spa-router';
     import Nav from './navigate.svelte';
     let products = [];
+    const token = localStorage.getItem('token');
 async function always_run(){
     try{
     let response = await fetch(`http://127.0.0.1:8000/read_product`, {
@@ -24,10 +25,11 @@ async function always_run(){
    async function remove(event , id){
     event.preventDefault();
     try{
-    let response = await fetch(`http://127.0.0.1:8000/delete_product/${id}`, {
+    let response = await fetch(`http://127.0.0.1:8000/delete_product`, {
         method: 'DELETE',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         }
       });
       if (!response.ok) {

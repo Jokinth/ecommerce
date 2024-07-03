@@ -3,7 +3,7 @@
     import Nav from './navigate.svelte';
     import Product from './product.svelte';
     import User from './user.svelte';
-    let user = localStorage.getItem('user') ;
+    let user = localStorage.getItem('role') ;
     $: user = user;
 
     function log_out(){
@@ -17,7 +17,7 @@
 <Nav /><br>
 <h1>HOME PAGE</h1>
 <div id = "log"><button on:click={log_out}>LOGOUT</button>  <button on:click={profile}>Profile</button></div>
-{#if user == "u"}
+{#if user == "user"}
 <User />
 {:else}
 <Product />

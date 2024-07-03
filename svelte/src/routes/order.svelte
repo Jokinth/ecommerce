@@ -3,6 +3,7 @@
   import { replace } from 'svelte-spa-router';
   import Nav from './navigate.svelte';
 let a=0;
+const token = localStorage.getItem('token');
   let currentUserID = localStorage.getItem('userID');
   let user_address = [];
   let total = localStorage.getItem(`total_${currentUserID}`) || 0;
@@ -12,10 +13,11 @@ let a=0;
 
   async function fetchAddresses() {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/get_address/${currentUserID}`, {
+      const response = await fetch(`http://127.0.0.1:8000/get_address`, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         }
       });
 
@@ -44,10 +46,11 @@ let a=0;
           description: ""
         };
 
-        const response = await fetch(`http://127.0.0.1:8000/update_product/${storedProductList[i].id}`, {
+        const response = await fetch(`http://127.0.0.1:8000/update_product`, {
           method: 'PUT',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify(formData1)
         });

@@ -4,6 +4,7 @@
 
  let id = localStorage.getItem('pid') ;
     $: id = id;
+    const token = localStorage.getItem('token');
    
     let p = {
         name : "" ,
@@ -26,10 +27,11 @@ async function p_create(event){
         description: p.descrition
     };
         try {
-      const response = await fetch(`http://127.0.0.1:8000/update_product/${id}`, {
+      const response = await fetch(`http://127.0.0.1:8000/update_product`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(formData)
       });

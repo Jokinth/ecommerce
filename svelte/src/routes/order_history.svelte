@@ -2,13 +2,15 @@
     import Nav from './navigate.svelte';
 
     let currentUserID = localStorage.getItem('userID');
-    let orders=[]
+    let orders=[];
+    const token = localStorage.getItem('token');
     async function fetch_orders() {
       try {
-        let response = await fetch(`http://127.0.0.1:8000/read_order/${currentUserID}`, {
+        let response = await fetch(`http://127.0.0.1:8000/read_order`, {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           }
         });
         if (!response.ok) {

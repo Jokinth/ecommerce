@@ -40,12 +40,10 @@
             msg = "give correct password"
         }
         else{
-      localStorage.setItem('userID', data.user_ID);
-      if(data.role == "u"){
-        localStorage.setItem('user', 'u');}
-      else{
-        localStorage.setItem('user', 'a');
-      }
+      localStorage.setItem('userID', data.user_id);
+      localStorage.setItem('token', data.access_token); 
+      localStorage.setItem('role', data.role);
+
       replace('/home');
     }}
 

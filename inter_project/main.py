@@ -21,7 +21,7 @@ app.add_middleware(
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["GET", "POST", "OPTIONS", "PUT" , "DELETE"],  # Add OPTIONS method
-    allow_headers=["Content-Type"],
+    allow_headers=["Authorization","Content-Type"],
 )
 sender_email = os.getenv('EMAIL_SENDER')
 password = os.getenv('EMAIL_PASSWORD')
@@ -68,6 +68,26 @@ def generate_token(length=20):
     token = ''.join(secrets.choice(alphabet) for _ in range(length))
     return token
 
+
+
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
+from datetime import datetime, timedelta
+
+# Secret key for token signing
+SECRET_KEY = "26"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
 @app.post("/signup", status_code=status.HTTP_201_CREATED)
 def sign_up(user: ModelUser, addresses: ModelAddress, db: Session = Depends(get_db)):
     # Create a new user
@@ -89,26 +109,48 @@ def sign_up(user: ModelUser, addresses: ModelAddress, db: Session = Depends(get_
     )
     db.add(db_user)
     db.commit()
-    db.refresh(db_user)
-    if(db_user.role == "user"):
-        return { "user_id" : db_user.uid , "role" : "u"}
-    else:
-        return { "user_id" : db_user.uid , "role" : "a"}
+    db.refresh(db_user)    
+    access_token = create_access_token(data={"id": db_user.uid ,"role": user.role})
+    token_type = "bearer"
+    return {"access_token": access_token, "token_type": token_type, "user_id": db_user.uid, "role": db_user.role}
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+def decode(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except jwt.JWTError as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
-@app.get("/get_user/{uid}",status_code=status.HTTP_200_OK)    
-def get_user( uid : int , db  :Session = Depends(get_db) ):
-   # user_id = int(user_id)
-    db_user = db.query(models.User).filter(models.User.uid == uid).first()
-    return {
-        "name" : db_user.user_name , 
-        "email" : db_user.email ,
-        "mobile_number" : db_user.mobile_number 
-    }
+# Example endpoint to retrieve user details using token
+@app.get('/get_user')
+def get_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    try:
+        payload = decode(token)
+        user_id = payload.get('id')  # Assuming 'sub' is the key for user_id in the token payload
+
+        # Fetch user from database based on user_id
+        db_user = db.query(models.User).filter(models.User.uid == user_id).first()
+
+        if db_user is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+        return {
+            "name": db_user.user_name,
+            "email": db_user.email,
+            "mobile_number": db_user.mobile_number
+        }
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
     
-@app.get("/get_address/{uid}",status_code=status.HTTP_200_OK)    
-def get_user( uid : int , db  :Session = Depends(get_db) ):
-    db_address = db.query(models.Address).filter(models.Address.user_id == uid).all()
+    
+@app.get("/get_address",status_code=status.HTTP_200_OK)    
+def get_user( token: str = Depends(oauth2_scheme), db  :Session = Depends(get_db) ):
+    payload = decode(token)
+    user_id = payload.get('id')
+    db_address = db.query(models.Address).filter(models.Address.user_id == user_id).all()
     return {"addresses" : db_address}
 
 
@@ -117,10 +159,9 @@ def login(user : login_user , db: Session = Depends(get_db)):
     consider_user = db.query(models.User).filter(models.User.email == user.email).first()
     if(consider_user):
       if(pwd_context.verify(user.password, consider_user.password)):
-          if(consider_user.role == "user"):
-             return { "user_ID" : consider_user.uid , "role" : "u"}
-          else:
-              return { "user_ID" : consider_user.uid , "role" : "a"}
+          access_token = create_access_token(data={"id": consider_user.uid , "role" :consider_user.role })
+          token_type = "bearer"
+          return {"access_token": access_token, "token_type": token_type, "user_id": consider_user.uid, "role": consider_user.role}
       else:
           return { "msg" : "pass_worng"}
     else:
@@ -130,8 +171,10 @@ def login(user : login_user , db: Session = Depends(get_db)):
 def logout():
     return {"message": "Successfully logged out"}
 
-@app.put("/edit/{user_id}")
-def update_profile(user_id: int, profile: profileUser, db: Session = Depends(get_db)):
+@app.put("/edit")
+def update_profile( profile: profileUser , token: str = Depends(oauth2_scheme) , db: Session = Depends(get_db)):
+    payload = decode(token)
+    user_id = payload.get('id')
     db_user = db.query(models.User).filter(models.User.uid == user_id).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -152,9 +195,11 @@ def update_profile(user_id: int, profile: profileUser, db: Session = Depends(get
     return db_user    
 
     
-@app.post("/add_address/{uid}")
-def add_address( uid : int , address : ModelAddress , db : Session = Depends(get_db) ):
-    user = db.query(models.User).filter(models.User.uid == uid).first()
+@app.post("/add_address")
+def add_address( address : ModelAddress,token: str = Depends(oauth2_scheme) , db : Session = Depends(get_db) ):
+    payload = decode(token)
+    user_id = payload.get('id')
+    user = db.query(models.User).filter(models.User.uid == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     db_address = models.Address(street=address.street,
@@ -229,9 +274,11 @@ def create_product(product : product_model , db: Session = Depends(get_db)):
     db.refresh(db_product)
     return { "msg" : "created" }
     
-@app.put("/update_product/{id}")
-async def delete_product( id : int , product : product_model , db: Session = Depends(get_db)):
-    db_product = db.query(models.Product).filter(models.Product.pid == id).first()
+@app.put("/update_product")
+async def delete_product(  product : product_model,token: str = Depends(oauth2_scheme) , db: Session = Depends(get_db)):
+    payload = decode(token)
+    user_id = payload.get('id')
+    db_product = db.query(models.Product).filter(models.Product.pid == user_id).first()
     if db_product:
         if product.pname:
             db_product.pname = product.pname
@@ -263,9 +310,11 @@ def read_all(db: Session = Depends(get_db)):
     products = db.query(models.Product).all()
     return products
 
-@app.delete("/delete_product/{id}")
-def update_product( id : int , db: Session = Depends(get_db)):
-    db_product = db.query(models.Product).filter(models.Product.pid == id).first()
+@app.delete("/delete_product")
+def update_product(token: str = Depends(oauth2_scheme) , db: Session = Depends(get_db)):
+    payload = decode(token)
+    user_id = payload.get('id')
+    db_product = db.query(models.Product).filter(models.Product.pid == user_id).first()
     if db_product:
         db.delete(db_product)
         db.commit() 
@@ -273,10 +322,12 @@ def update_product( id : int , db: Session = Depends(get_db)):
     else:
         return {"msg":"no product"}
 
-@app.get("/get_product/{id}",status_code=status.HTTP_200_OK)    
-def get_product( id : int , db  :Session = Depends(get_db) ):
+@app.get("/get_product",status_code=status.HTTP_200_OK)    
+def get_product( token: str = Depends(oauth2_scheme), db  :Session = Depends(get_db) ):
    # user_id = int(user_id)
-    db_product = db.query(models.Product).filter(models.Product.pid == id).first()
+    payload = decode(token)
+    user_id = payload.get('id')
+    db_product = db.query(models.Product).filter(models.Product.pid == user_id).first()
     return {"name" : db_product.pname , "quantity":db_product.quantity_available , "price" : db_product.price}
 
 
@@ -298,8 +349,10 @@ def order( order : order , db: Session = Depends(get_db)):
     db.commit() 
     db.refresh(db_order)
     
-@app.get("/read_order/{id}")
-def read_all( id : int , db: Session = Depends(get_db)):
-    orders = db.query(models.Order).filter(id == models.Order.uid).all()
+@app.get("/read_order")
+def read_all( token: str = Depends(oauth2_scheme) , db: Session = Depends(get_db)):
+    payload = decode(token)
+    user_id = payload.get('id')
+    orders = db.query(models.Order).filter(user_id == models.Order.uid).all()
     return orders
     

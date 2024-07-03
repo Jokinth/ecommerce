@@ -1,6 +1,6 @@
 <script>
     import { replace } from "svelte-spa-router";import Nav from './navigate.svelte';
-
+    const token = localStorage.getItem('token');
    let currentUserID = localStorage.getItem('userID') ;
    let  address = {
     street : "",
@@ -17,10 +17,11 @@
         country: address.country
     };
         try {
-      const response = await fetch(`http://127.0.0.1:8000/add_address/${currentUserID}`, {
+      const response = await fetch(`http://127.0.0.1:8000/add_address`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(formData)
       });

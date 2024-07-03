@@ -2,6 +2,7 @@
     import { push, replace } from "svelte-spa-router";
     import Nav from './navigate.svelte';
     let currentUserID = localStorage.getItem('userID') ;
+    const token = localStorage.getItem('token');
     
     let profile = {
         user_name: "",
@@ -19,10 +20,11 @@
         mobile_number: profile.mobile_number
       };
         try{
-    let response = await fetch(`http://127.0.0.1:8000/edit/${currentUserID}`, {
+    let response = await fetch(`http://127.0.0.1:8000/edit`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(formData)
       });
