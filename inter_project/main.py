@@ -1,6 +1,6 @@
 from fastapi import HTTPException, FastAPI, Depends , status
 from sqlalchemy.orm import Session
-from database import local_session, engine, Base
+from database import local_session
 from pydantic import BaseModel
 import models  # Assuming your models are imported correctly
 from passlib.context import CryptContext
@@ -10,7 +10,7 @@ import string
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-
+import os
 
 app = FastAPI()
 
@@ -186,8 +186,8 @@ def reset_password(reset : reset, db: Session = Depends(get_db)):
     return {"message": "Password reset successfully"}        
 
 def send_password_reset_email(receiver_email, token):
-    sender_email = '2022it0835@svce.ac.in'
-    password = 'svce4321'
+    sender_email = os.getenv('EMAIL_SENDER')
+    password = os.getenv('EMAIL_PASSWORD')
     
     message = MIMEMultipart()
     message['From'] = sender_email

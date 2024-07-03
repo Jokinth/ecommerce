@@ -1,4 +1,5 @@
 <script>
+    import { replace } from 'svelte-spa-router';
   import Nav from './navigate.svelte';
     let a=0;
     let p = {
@@ -34,7 +35,8 @@ async function p_create(event){
       }
       const data = await response.json();
       if(data.msg == "created"){
-        a = 1;
+        alert('created!!');
+        replace('/product');
       }
     } catch (error) {
       console.error('Error signing up:', error);

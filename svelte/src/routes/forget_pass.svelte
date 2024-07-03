@@ -1,7 +1,9 @@
 <script>
+    import { replace } from 'svelte-spa-router';
     let email = "";
     let otp = '';
     let dispaly="none";
+    $:dispaly:dispaly
     let  pass ="";
     import Nav from './navigate.svelte';
 
@@ -44,6 +46,8 @@
         throw new Error('Network response was not ok');
       }
       let data = await response.json();
+      alert('pass changed!!')
+      replace('/login');
     }
     catch (error) {
       console.error( error);
