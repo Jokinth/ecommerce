@@ -1,7 +1,7 @@
 <script>
     import { replace } from 'svelte-spa-router';
   import Nav from './navigate.svelte';
-    let a=0;
+    
     let p = {
         name : " " ,
         price : " " ,
@@ -57,7 +57,4 @@ async function p_create(event){
             <input type="submit" value="create product">
         </th> </tr>
     </table>
-</form>
-{#if a== 1}
-<h1>created</h1>
-{/if}
+  </form>

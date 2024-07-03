@@ -5,7 +5,7 @@
     let dispaly="none";
     $:dispaly:dispaly
     let  pass ="";
-    import Nav from './navigate.svelte';
+  
 
     async function send_otp(){
         let formData = {
@@ -23,8 +23,14 @@
         throw new Error('Network response was not ok');
       }
       let data = await response.json();
-      dispaly="block";
-    }
+      if(data.message  == "user not found"){
+        alert(data.message);}
+      else if(data.message == "Email sent successfully"){
+        dispaly="block";
+      }  
+      else{
+        alert("not sent");
+    }}
     catch (error) {
       console.error( error);
     }}
@@ -47,7 +53,7 @@
       }
       let data = await response.json();
       alert('pass changed!!')
-      replace('/login');
+      replace('/');
     }
     catch (error) {
       console.error( error);
@@ -55,7 +61,6 @@
     }
 
 </script>
-<Nav />
 <h1>please wait until the email recived in your account so that the otp and password form is available</h1>
 <form>
     <table>

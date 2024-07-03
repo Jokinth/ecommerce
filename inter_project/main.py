@@ -2,7 +2,7 @@ from fastapi import HTTPException, FastAPI, Depends , status
 from sqlalchemy.orm import Session
 from database import local_session
 from pydantic import BaseModel
-import models  # Assuming your models are imported correctly
+import models  
 from passlib.context import CryptContext
 from fastapi.middleware.cors import CORSMiddleware
 import secrets
@@ -23,7 +23,8 @@ app.add_middleware(
     allow_methods=["GET", "POST", "OPTIONS", "PUT" , "DELETE"],  # Add OPTIONS method
     allow_headers=["Content-Type"],
 )
-
+sender_email = os.getenv('EMAIL_SENDER')
+password = os.getenv('EMAIL_PASSWORD')
 class ModelUser(BaseModel):
     user_name: str
     email: str
@@ -169,16 +170,16 @@ def add_address( uid : int , address : ModelAddress , db : Session = Depends(get
 def change_password( change : forget_pass , db : Session = Depends(get_db) ):
     db_user = db.query(models.User).filter(models.User.email == change.email).first()
     if not db_user:
-        return {"msg" : "no mail"}
-    send_password_reset_email(change.email ,db_user.token)
-    return {"msg" : "yes mail"}
+        return {"message": "user not found"}
+    mg = send_password_reset_email(change.email ,db_user.token)
+    return {"message" : mg}
 
 @app.post("/reset_password", status_code=status.HTTP_200_OK)
 def reset_password(reset : reset, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.token == reset.token).first()
     
     if not db_user:
-        return {"message": "token not found"}        
+        return {"message": "user not found"}        
 
     db_user.password = pwd_context.hash(reset.new_password) 
     db.commit()
@@ -186,9 +187,6 @@ def reset_password(reset : reset, db: Session = Depends(get_db)):
     return {"message": "Password reset successfully"}        
 
 def send_password_reset_email(receiver_email, token):
-    sender_email = os.getenv('EMAIL_SENDER')
-    password = os.getenv('EMAIL_PASSWORD')
-    
     message = MIMEMultipart()
     message['From'] = sender_email
     message['To'] = receiver_email
@@ -202,9 +200,9 @@ def send_password_reset_email(receiver_email, token):
             server.starttls()
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, message.as_string())
-        print("Email sent successfully")
+        return "Email sent successfully"
     except Exception as e:
-        print(f"Error sending email: {e}")
+        return "Error sending email"
 
 #product 
 
