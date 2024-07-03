@@ -91,6 +91,7 @@ let a=0;
     }
   }
 let products = [];
+let product_id=[]
 async function fetchProducts() {
     try {
       let response = await fetch(`http://127.0.0.1:8000/read_product`, {
@@ -104,31 +105,26 @@ async function fetchProducts() {
       }
       let data = await response.json();
       products = data;
+      product_id = data.map(product => product.pid);
     } catch (error) {
       console.error(error);
     }
   }
-  let product_id=[]
-  for(let i =0 ;i<length.products;i++){
-    product_id.append(products[i].id);
-  }
+  
+  let c=0;
   function checkQuantity() {
+    
     for (let i = 0; i < storedProductList.length; i++) {
-    if(storedProductList[i].id  in product_id){
-      continue;
-    }
-      else{
-        return false;
-      }
-      }
-    for (let i = 0; i < storedProductList.length; i++) {
-      if (storedProductList[i].available >= storedProductList[i].quantity) {
-        continue;
-      }
-      return false;
+        if ( !product_id.includes(storedProductList[i].id) ) {
+          alert('no');  
+          return false; 
+        }
+        if (storedProductList[i].available < storedProductList[i].quantity) {
+            return false;
+        }
     }
     return true;
-  }
+}
 
   async function order(event) {
     event.preventDefault();
@@ -150,6 +146,7 @@ async function fetchProducts() {
 
   // Fetch addresses on component mount
   onMount(fetchAddresses);
+  onMount(fetchProducts);
   function selectedAddress_(event){
     selectedAddress = event.target.value;
   }
@@ -199,3 +196,9 @@ async function fetchProducts() {
     padding: 10px;
   }
 </style>
+<!--{#each product_id as id , i}
+          <div>
+          <h1>{id}</h1>
+          <h1>{storedProductList[i].id}</h1></div>
+        {/each}-->
+        
