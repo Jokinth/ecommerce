@@ -10,6 +10,10 @@ import Product from './routes/product.svelte';
 import Product_c from './routes/createp.svelte';
 import Product_u from './routes/updatep.svelte';
 import Product_up from './routes/update_product.svelte';
+import Order from './routes/order.svelte';
+import Cart from './routes/cart.svelte';
+import Success from './routes/sucess_page.svelte';
+import History from './routes/order_history.svelte';
 
 export const routes = {
     '/home': Home,
@@ -24,4 +28,8 @@ export const routes = {
     '/createp':Product_c,
     '/edit':Edit,
     '/update_product':Product_up,
+    '/cart':Cart,
+    '/order':Order,
+    '/sucess':Success,
+    '/history':History
 };

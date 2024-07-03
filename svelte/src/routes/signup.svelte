@@ -49,8 +49,12 @@ let  address = {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-      localStorage.setItem('userID', data.user_id);
-      //if(data.role == "u"){
+      localStorage.setItem('user_id', data.user_id);
+      if(data.role == "u"){
+        localStorage.setItem('user', 'u');}
+      else{
+        localStorage.setItem('user', 'a');
+      }
       replace(`/home`);
 
     } catch (error) {

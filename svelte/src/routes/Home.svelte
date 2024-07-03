@@ -2,6 +2,7 @@
     import { replace } from "svelte-spa-router";
     import Nav from './navigate.svelte';
     import Product from './product.svelte';
+    import User from './user.svelte';
     let user = localStorage.getItem('user') ;
     $: user = user;
 
@@ -17,7 +18,7 @@
 <h1>HOME PAGE</h1>
 <div id = "log"><button on:click={log_out}>LOGOUT</button>  <button on:click={profile}>Profile</button></div>
 {#if user == "u"}
-<h1>user</h1>
+<User />
 {:else}
 <Product />
 {/if}

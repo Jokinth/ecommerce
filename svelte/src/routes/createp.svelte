@@ -45,12 +45,12 @@ async function p_create(event){
 <h1>create product</h1>
 <br><form on:submit={p_create}>
     <table>
-        <tr><th>name:</th><th><input type="text" bind:value={p.name}></th></tr>
-        <tr><th>price:</th><th><input type="number" bind:value={p.price}></th></tr>
-        <tr><th>quantity availale:</th><th><input type="number" bind:value={p.availale}></th></tr>
-        <tr><th>catogery:</th><th><input type="text" bind:value={p.category}></th></tr>
-        <tr><th>brand:</th><th><input type="text" bind:value={p.brand}></th></tr>
-        <tr><th>descrition:</th><th><input type="text" bind:value={p.descrition}></th></tr>
+        <tr><th>name:</th><th><input type="text" bind:value={p.name} required></th></tr>
+        <tr><th>price:</th><th><input type="number" bind:value={p.price} required></th></tr>
+        <tr><th>quantity availale:</th><th><input type="number" bind:value={p.availale} required></th></tr>
+        <tr><th>catogery:</th><th><input type="text" bind:value={p.category} required></th></tr>
+        <tr><th>brand:</th><th><input type="text" bind:value={p.brand} required></th></tr>
+        <tr><th>descrition:</th><th><input type="text" bind:value={p.descrition} required></th></tr>
         <tr> <th colspan="2" align="right">
             <input type="submit" value="create product">
         </th> </tr>

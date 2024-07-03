@@ -89,7 +89,11 @@ def sign_up(user: ModelUser, addresses: ModelAddress, db: Session = Depends(get_
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return {"user_id" : db_user.uid}
+    if(db_user.role == "user"):
+        return { "user_id" : db_user.uid , "role" : "u"}
+    else:
+        return { "user_id" : db_user.uid , "role" : "a"}
+
 
 @app.get("/get_user/{uid}",status_code=status.HTTP_200_OK)    
 def get_user( uid : int , db  :Session = Depends(get_db) ):
@@ -232,21 +236,29 @@ async def delete_product( id : int , product : product_model , db: Session = Dep
     db_product = db.query(models.Product).filter(models.Product.pid == id).first()
     if db_product:
         if product.pname:
-         db_product.pname = product.pname, 
+            db_product.pname = product.pname
         if product.price:
-         db_product.price= product.price,
-        if product.quantity_available:
-            db_product.quantity_available = product.quantity_available,
+            db_product.price = product.price
+        if product.quantity_available is not None:
+            if product.quantity_available == -1:
+                db_product.quantity_available = 0
+            else:
+                db_product.quantity_available = product.quantity_available
         if product.category:
-            db_product.category = product.category,
+            db_product.category = product.category
         if product.brand:
-            db_product.brand = product.brand,
+            db_product.brand = product.brand
         if product.description:
             db_product.description = product.description
+        if db_product.quantity_available == 0:
+            db.delete(db_product)
+            db.commit()
         db.commit() 
         return {"msg":"updated"}
     else:
         return {"msg":"no product"}
+
+    
     
 @app.get("/read_product")
 def read_all(db: Session = Depends(get_db)):
@@ -262,3 +274,34 @@ def update_product( id : int , db: Session = Depends(get_db)):
         return {"msg":"deleted"}
     else:
         return {"msg":"no product"}
+
+@app.get("/get_product/{id}",status_code=status.HTTP_200_OK)    
+def get_product( id : int , db  :Session = Depends(get_db) ):
+   # user_id = int(user_id)
+    db_product = db.query(models.Product).filter(models.Product.pid == id).first()
+    return {"name" : db_product.pname , "quantity":db_product.quantity_available , "price" : db_product.price}
+
+
+#order
+
+class order(BaseModel):
+    uid : int
+    total_rate : int
+    address : str
+    
+@app.post("/pot_order")
+def order( order : order , db: Session = Depends(get_db)):
+    db_order = models.Order(
+        uid = order.uid ,
+        total_amount = order.total_rate ,
+        address = order.address
+    )
+    db.add(db_order)
+    db.commit() 
+    db.refresh(db_order)
+    
+@app.get("/read_order/{id}")
+def read_all( id : int , db: Session = Depends(get_db)):
+    orders = db.query(models.Order).filter(id == models.Order.uid).all()
+    return orders
+    
