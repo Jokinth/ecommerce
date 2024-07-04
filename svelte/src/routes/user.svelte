@@ -42,6 +42,13 @@
   }
 
   fetchProducts();
+
+function  view_product(pid){
+  
+  localStorage.setItem('current_product', pid);
+  replace('/view');
+}
+
 </script>
 
 <Nav />
@@ -72,10 +79,12 @@
           <td>{product.brand}</td>
           <td>{product.description}</td>
           <td>
-            <input type="number" bind:value={quantity_required[i]} required>
-            <button on:click={(event) => add_to_cart(event, product.pname , product.pid , product.price , product.quantity_available , quantity_required[i])}>Add to Cart</button>
+            <input type="number" bind:value={quantity_required[i]} >
+            <button on:click={(event) => add_to_cart(event, product.pname , product.pid , product.price , product.quantity_available , quantity_required[i])} >Add to Cart</button>
           </td>
-        </tr>
+        <td> <button on:click={() => view_product(product.pid)}>view</button>
+        </td>
+      </tr>
       {/each}
     </tbody>
   </table>

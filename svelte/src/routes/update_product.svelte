@@ -27,7 +27,7 @@ async function p_create(event){
         description: p.descrition
     };
         try {
-      const response = await fetch(`http://127.0.0.1:8000/update_product`, {
+      const response = await fetch(`http://127.0.0.1:8000/update_product/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

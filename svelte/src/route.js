@@ -14,6 +14,7 @@ import Order from './routes/order.svelte';
 import Cart from './routes/cart.svelte';
 import Success from './routes/sucess_page.svelte';
 import History from './routes/order_history.svelte';
+import View from './routes/view_product.svelte';
 
 export const routes = {
     '/home': Home,
@@ -31,5 +32,6 @@ export const routes = {
     '/cart':Cart,
     '/order':Order,
     '/sucess':Success,
-    '/history':History
+    '/history':History,
+    '/view' : View
 };

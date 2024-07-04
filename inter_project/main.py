@@ -259,6 +259,7 @@ class product_model(BaseModel):
     brand : str
     description : str
 
+
 @app.post("/create_product")
 def create_product(product : product_model , db: Session = Depends(get_db)):
     db_product = models.Product( 
@@ -274,17 +275,17 @@ def create_product(product : product_model , db: Session = Depends(get_db)):
     db.refresh(db_product)
     return { "msg" : "created" }
     
-@app.put("/update_product")
-async def delete_product(  product : product_model,token: str = Depends(oauth2_scheme) , db: Session = Depends(get_db)):
+@app.put("/update_product/{pid}")
+async def update_product( pid : int ,product : product_model , token: str = Depends(oauth2_scheme) , db: Session = Depends(get_db)):
     payload = decode(token)
     user_id = payload.get('id')
-    db_product = db.query(models.Product).filter(models.Product.pid == user_id).first()
+    db_product = db.query(models.Product).filter(models.Product.pid == pid).first()
     if db_product:
         if product.pname:
             db_product.pname = product.pname
         if product.price:
             db_product.price = product.price
-        if product.quantity_available is not None:
+        if product.quantity_available:
             if product.quantity_available == -1:
                 db_product.quantity_available = 0
             else:
@@ -309,6 +310,14 @@ async def delete_product(  product : product_model,token: str = Depends(oauth2_s
 def read_all(db: Session = Depends(get_db)):
     products = db.query(models.Product).all()
     return products
+
+@app.get("/read_product/{pid}")
+def read_all(pid : int ,db: Session = Depends(get_db)):
+    product = db.query(models.Product).filter(models.Product.pid == pid).first()
+    if(product):
+      return product
+    return {"msg" : "not found"}
+
 
 @app.delete("/delete_product")
 def update_product(token: str = Depends(oauth2_scheme) , db: Session = Depends(get_db)):
@@ -355,4 +364,42 @@ def read_all( token: str = Depends(oauth2_scheme) , db: Session = Depends(get_db
     user_id = payload.get('id')
     orders = db.query(models.Order).filter(user_id == models.Order.uid).all()
     return orders
+
+#review
+
+class model_review(BaseModel):
+    rating : int
+    review_text : str
+
+@app.post('/review/{pid}' , status_code=status.HTTP_201_CREATED , response_model=None)
+def review( pid : int , review : model_review , token: str = Depends(oauth2_scheme) ,db : Session = Depends(get_db)):
+    payload = decode(token)
+    user_id = payload.get('id')
+    db_review = models.Review(
+        uid = user_id ,
+        pid =pid ,
+        rating = review.rating ,
+        review_text = review.review_text
+    )
+    db.add(db_review)
+    db.commit()
+    db.refresh(db_review)
+    return {'msg' : 'success'}
+    
+@app.get("/read_reviews/{pid}")
+def read_all( pid : int ,  token: str = Depends(oauth2_scheme) , db: Session = Depends(get_db)):
+    payload = decode(token)
+    user_id = payload.get('id')
+    reviews = db.query(models.Review,models.User.user_name).join(models.User,models.User.uid == user_id).filter(models.Review.pid ==  pid).all()
+    reviews_with_username = []
+    for review , user_name in reviews:
+            review_dict = {
+                "id": review.id,
+                "review_text": review.review_text,
+                "rating": review.rating,
+                "username": user_name  
+            }
+            reviews_with_username.append(review_dict)
+
+    return reviews_with_username
     

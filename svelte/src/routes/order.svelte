@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { replace } from 'svelte-spa-router';
   import Nav from './navigate.svelte';
-let a=0;
+
 const token = localStorage.getItem('token');
   let currentUserID = localStorage.getItem('userID');
   let user_address = [];
@@ -36,7 +36,10 @@ const token = localStorage.getItem('token');
     try {
       for (let i = 0; i < storedProductList.length; i++) {
         let ava = parseInt(storedProductList[i].available) - parseInt(storedProductList[i].quantity);
-        if(ava == 0){ava = -1;}
+         
+        if(ava == 0){
+          ava = -1;
+        }
         const formData1 = {
           pname: "",
           price: 0,
@@ -46,7 +49,7 @@ const token = localStorage.getItem('token');
           description: ""
         };
 
-        const response = await fetch(`http://127.0.0.1:8000/update_product`, {
+        const response = await fetch(`http://127.0.0.1:8000/update_product/${storedProductList[i].id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -199,6 +202,7 @@ async function fetchProducts() {
     padding: 10px;
   }
 </style>
+
 <!--{#each product_id as id , i}
           <div>
           <h1>{id}</h1>

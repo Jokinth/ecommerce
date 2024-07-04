@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey , TIMESTAMP
 from sqlalchemy.orm import relationship
 from database import Base  # Assuming Base is your SQLAlchemy Base object
-from typing import Optional
 
 class User(Base):
     __tablename__ = 'user'
@@ -16,6 +15,7 @@ class User(Base):
 
     addresses = relationship("Address", back_populates="user" , primaryjoin="User.uid == Address.user_id")
     orders = relationship("Order", back_populates="user" ,primaryjoin="User.uid == Order.uid")
+    reviews = relationship("Review", back_populates="user",primaryjoin="User.uid == Review.uid")
 
 class Address(Base):
     __tablename__ = 'address'
@@ -40,6 +40,7 @@ class Product(Base):
     category = Column(String(50))
     brand = Column(String(30))
     description = Column(String(250))
+    reviews = relationship("Review", back_populates="product",primaryjoin="Product.pid == Review.pid")
 
 class Order(Base):
     __tablename__ = 'orders'
@@ -51,3 +52,15 @@ class Order(Base):
     address = Column(String(250), nullable=False)
 
     user = relationship("User", back_populates="orders",primaryjoin="User.uid == Order.uid")
+    
+class Review(Base):
+    __tablename__ = 'review'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    review_text = Column(String(500))  # Adjust the length as needed
+    rating = Column(Integer)
+    uid = Column(Integer, ForeignKey('user.uid'))
+    pid = Column(Integer, ForeignKey('product.pid'))
+
+    user = relationship("User", back_populates="reviews",primaryjoin="User.uid == Review.uid")
+    product = relationship("Product", back_populates="reviews",primaryjoin="Product.pid == Review.pid")
