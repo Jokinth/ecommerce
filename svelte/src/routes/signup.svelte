@@ -53,6 +53,8 @@ let  address = {
 localStorage.setItem('token', data.access_token);
 localStorage.setItem('userID', data.user_ID);
 localStorage.setItem('role', data.role);
+localStorage.setItem('exp', data.exp);
+
       replace(`/home`);
     } catch (error) {
       console.error('Error signing up:', error);
@@ -63,7 +65,7 @@ localStorage.setItem('role', data.role);
 <body style="text-align: center;">
     <h1 style="text-align:center"><b><u>USER SIGN UP</u></b></h1>
     <form on:submit={submit}>
-        <table border="1" style="margin-left: auto; margin-right : auto;">
+        <table>
             <tr> <th>NAME :</th> <th> <input type = "text" bind:value = {user.user_name} required > </th> </tr>
             <tr> <th>E-MAIL ID : </th> <th> <input type = "email" bind:value={user.email} required> </th> </tr>
             <tr> <th>MOBILE NUMBER :</th> <th> <input type = "text" bind:value={user.mobile_number} required> </th> </tr>
@@ -75,15 +77,77 @@ localStorage.setItem('role', data.role);
             <tr> <th> CITY :</th> <th> <input type = "text" bind:value={address.city} required> </th> </tr>
             <tr> <th> STATE :</th> <th> <input type = "text" bind:value={address.state} required> </th> </tr>
             <tr> <th> COUNTRY :</th> <th> <input type = "text" bind:value={address.country} required> </th> </tr>
-            <tr> <th colspan="2" align="right">
+            <tr> <th colspan="2" id='submit'>
                 <input type="submit" value="Sign up">
             </th> </tr>
         </table>
     </form>
+  </body>
     <style>
-        a{
-            color: black;
-            text-decoration: none;
-        }
+         body {
+      overflow: auto;
+      background: linear-gradient(to bottom, #d47d19, #a50b58);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  
+  h1 {
+      text-align: center;
+      color: #fff;
+      text-decoration: underline;
+      margin-bottom: 20px;
+    }
+  
+    form {
+      width: 80%;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 8px;
+      border-radius: 8px;
+      background-color: wheat;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+   #submit{
+    text-align: right;
+   }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+  
+    th {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+  
+    input[type="text"] ,input[type="email"],input[type="password"]{
+      width: calc(100% - 20px); 
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+  
+    input[type="submit"] {
+      padding: 8px 20px;
+      background-color: rgb(182, 37, 134);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      text-align: right;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+  
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
     </style>
-</body>

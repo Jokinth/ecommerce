@@ -1,5 +1,6 @@
 <script>
     import { replace } from "svelte-spa-router";
-
-    replace("/")
+    
+alert('logged out successfully!');
+  replace("/")
 </script>

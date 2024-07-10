@@ -22,10 +22,10 @@ async function always_run(){
     }
     }always_run();
 
-   async function remove(event , id){
+   async function remove(event,pid){
     event.preventDefault();
     try{
-    let response = await fetch(`http://127.0.0.1:8000/delete_product`, {
+    let response = await fetch(`http://127.0.0.1:8000/delete_product/${pid}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -36,6 +36,7 @@ async function always_run(){
         throw new Error('Network response was not ok');
       }
        let data = await response.json();
+       alert(data.msg);
        always_run();
     }
     catch (error) {
@@ -49,6 +50,7 @@ async function always_run(){
    }
 
 </script>
+<body>
 <Nav /><br>
 <h1>products:</h1>
 <form><table>
@@ -59,4 +61,67 @@ async function always_run(){
         </th> <th><button on:click={(event) => remove(event,product.pid)}>remove</button></th>
     </tr>
       {/each}
-    </table></form>
+    </table>
+  </form>
+  </body>
+  <style>
+    body {
+      overflow: auto;
+      background: linear-gradient(to bottom, #d47d19, #a50b58);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  
+  h1 {
+      text-align: center;
+      color: #fff;
+      text-decoration: underline;
+      margin-bottom: 20px;
+    }
+  
+    form {
+      width: 100%;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: wheat;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+  
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+  
+    th {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+  
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+  
+  
+button {
+      padding: 10px 20px;
+      background-color: rgb(182, 37, 134);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+  
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>

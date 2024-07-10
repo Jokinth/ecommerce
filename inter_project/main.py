@@ -86,7 +86,7 @@ def create_access_token(data: dict):
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+    return encoded_jwt , expire
 
 @app.post("/signup", status_code=status.HTTP_201_CREATED)
 def sign_up(user: ModelUser, addresses: ModelAddress, db: Session = Depends(get_db)):
@@ -110,9 +110,9 @@ def sign_up(user: ModelUser, addresses: ModelAddress, db: Session = Depends(get_
     db.add(db_user)
     db.commit()
     db.refresh(db_user)    
-    access_token = create_access_token(data={"id": db_user.uid ,"role": user.role})
+    access_token , exp = create_access_token(data={"id": db_user.uid ,"role": user.role})
     token_type = "bearer"
-    return {"access_token": access_token, "token_type": token_type, "user_id": db_user.uid, "role": db_user.role}
+    return {"access_token": access_token, "token_type": token_type,"exp":exp , "user_id": db_user.uid, "role": db_user.role}
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 def decode(token: str):
@@ -159,9 +159,9 @@ def login(user : login_user , db: Session = Depends(get_db)):
     consider_user = db.query(models.User).filter(models.User.email == user.email).first()
     if(consider_user):
       if(pwd_context.verify(user.password, consider_user.password)):
-          access_token = create_access_token(data={"id": consider_user.uid , "role" :consider_user.role })
+          access_token,exp = create_access_token(data={"id": consider_user.uid , "role" :consider_user.role })
           token_type = "bearer"
-          return {"access_token": access_token, "token_type": token_type, "user_id": consider_user.uid, "role": consider_user.role}
+          return {"access_token": access_token, "token_type": token_type,"exp":exp ,"user_id": consider_user.uid, "role": consider_user.role}
       else:
           return { "msg" : "pass_worng"}
     else:
@@ -319,11 +319,11 @@ def read_all(pid : int ,db: Session = Depends(get_db)):
     return {"msg" : "not found"}
 
 
-@app.delete("/delete_product")
-def update_product(token: str = Depends(oauth2_scheme) , db: Session = Depends(get_db)):
+@app.delete("/delete_product/{pid}")
+def update_product( pid : int,token: str = Depends(oauth2_scheme) , db: Session = Depends(get_db)):
     payload = decode(token)
     user_id = payload.get('id')
-    db_product = db.query(models.Product).filter(models.Product.pid == user_id).first()
+    db_product = db.query(models.Product).filter(models.Product.pid == pid).first()
     if db_product:
         db.delete(db_product)
         db.commit() 
@@ -390,7 +390,7 @@ def review( pid : int , review : model_review , token: str = Depends(oauth2_sche
 def read_all( pid : int ,  token: str = Depends(oauth2_scheme) , db: Session = Depends(get_db)):
     payload = decode(token)
     user_id = payload.get('id')
-    reviews = db.query(models.Review,models.User.user_name).join(models.User,models.User.uid == user_id).filter(models.Review.pid ==  pid).all()
+    reviews = db.query(models.Review,models.User.user_name).join(models.User,models.User.uid == models.Review.uid).filter(models.Review.pid ==  pid).all()
     reviews_with_username = []
     for review , user_name in reviews:
             review_dict = {
@@ -402,4 +402,4 @@ def read_all( pid : int ,  token: str = Depends(oauth2_scheme) , db: Session = D
             reviews_with_username.append(review_dict)
 
     return reviews_with_username
-    
+ 

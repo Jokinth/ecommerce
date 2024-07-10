@@ -36,25 +36,93 @@ async function p_create(event){
       const data = await response.json();
       if(data.msg == "created"){
         alert('created!!');
-        replace('/product');
+        replace('/home');
       }
     } catch (error) {
       console.error('Error signing up:', error);
     }
     }
-</script>
+</script><body>
 <Nav /><br>
 <h1>create product</h1>
 <br><form on:submit={p_create}>
     <table>
-        <tr><th>name:</th><th><input type="text" bind:value={p.name} required></th></tr>
-        <tr><th>price:</th><th><input type="number" bind:value={p.price} required></th></tr>
-        <tr><th>quantity availale:</th><th><input type="number" bind:value={p.availale} required></th></tr>
+        <tr><th>Name:</th><th><input type="text" bind:value={p.name} required></th></tr>
+        <tr><th>Price:</th><th><input type="number" bind:value={p.price} required></th></tr>
+        <tr><th>Quantity availale:</th><th><input type="number" bind:value={p.availale} required></th></tr>
         <tr><th>catogery:</th><th><input type="text" bind:value={p.category} required></th></tr>
-        <tr><th>brand:</th><th><input type="text" bind:value={p.brand} required></th></tr>
-        <tr><th>descrition:</th><th><input type="text" bind:value={p.descrition} required></th></tr>
+        <tr><th>Brand:</th><th><input type="text" bind:value={p.brand} required></th></tr>
+        <tr><th>Descrition:</th><th><input type="text" bind:value={p.descrition} required></th></tr>
         <tr> <th colspan="2" align="right">
             <input type="submit" value="create product">
         </th> </tr>
     </table>
-  </form>
+  </form></body>
+  <style>
+    body {
+      overflow: auto;
+      background: linear-gradient(to bottom, #d47d19, #a50b58);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  
+  h1 {
+      text-align: center;
+      color: #fff;
+      text-decoration: underline;
+      margin-bottom: 20px;
+    }
+  
+    form {
+      width: 80%;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+  
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+  
+    th {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+  
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+  
+    input[type="text"],input[type="number"] {
+      width: calc(100% - 20px); 
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+  
+    input[type="submit"] {
+      padding: 10px 20px;
+      background-color: rgb(182, 37, 134);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+  
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+  </style>

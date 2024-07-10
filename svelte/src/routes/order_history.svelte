@@ -23,12 +23,13 @@
       }
     }
 fetch_orders();
-</script>
+</script><div id='total'>
 <Nav/><br><br>
-
-    <table border="1" style="width: 100%;">
+<form>
+    <table>
       <thead>
         <tr>
+          <th>order</th>
           <th>order time</th>
           <th>address</th>
           <th>total amount</th>
@@ -37,9 +38,33 @@ fetch_orders();
       <tbody>
         {#each orders as order, i}
           <tr>
+            <td>{i+1}</td>
             <td>{order.order_time}</td>
             <td>{order.address}</td>
             <td>{order.total_amount}</td>
           </tr>  {/each}
         </tbody>
-    </table>
+    </table></form></div>
+    <style>
+      form {
+    color:#010f01;
+    margin: 20px auto;
+    width: 1000px;
+    padding: 20px;
+    border: 1px solid #031103;
+    border-radius: 5px;
+    background-color: wheat;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  table {
+    width: 100%;
+    text-align: center;
+  }
+  #total{overflow: auto;
+        background: linear-gradient(to bottom, #d47d19, #a50b58);
+        height: 100vh; 
+        display: flex;
+        flex-direction: column;
+    }
+    </style>

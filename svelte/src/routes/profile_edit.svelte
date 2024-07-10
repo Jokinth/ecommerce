@@ -61,8 +61,8 @@ function edit(){
   }
     always_run();
 </script>
-<Nav />
-<form on:submit={edit}>
+<div id='total'><Nav />
+<form on:submit={edit} id="userInfoForm">
   <table style="margin-left: auto; margin-right : auto;">
     <tr><th>NAME : </th><th>{user.name}</th></tr>
     <tr><th>E-MAIL : </th><th>{user.email}</th> </tr>
@@ -73,7 +73,7 @@ function edit(){
     </table>
     </form>
     
-<form>
+<form id="userAddressForm">
   <table style="margin-left: auto; margin-right : auto;">
     <tr><th>adresses:</th>
       <th>
@@ -86,4 +86,65 @@ function edit(){
         <button on:click={add_address}>add address</button>
     </th> </tr>
   </table>
-</form>
+</form></div>
+<style>
+  
+  #total {
+    overflow: auto;
+    background: linear-gradient(to bottom, #d47d19, #a50b58);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: rgb(116, 9, 9);
+    padding: 20px;
+  }
+
+  
+  #userInfoForm, #userAddressForm {
+    width: 80%;
+    max-width: 600px;
+    background-color: wheat;
+    border: 1px solid #48d348;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  table {
+    width: 100%;
+    text-align: left;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  th {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    background-color: #f2f2f2;
+    text-align: left;
+  }
+
+  input[type="submit"], button {
+    padding: 8px 16px;
+    background-color: rgb(182, 37, 134);
+    color: wheat;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  input[type="submit"]:hover, button:hover {
+    background-color: #45a049;
+  }
+
+  ol {
+    padding-left: 20px;
+  }
+
+  li {
+    margin-bottom: 8px;
+  }
+</style>

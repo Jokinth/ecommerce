@@ -36,22 +36,91 @@
     calculateTotal(); // Update total after removal
   }
 </script>
-
+<div id='total'>
 <Nav />
 <br>
-<h3>Items in your cart:</h3>
-
+<b>
+<h2><u>Items in your cart:</u></h2>
+</b>
 {#if storedProductList.length > 0}
-  <div>
-    <h2>Stored Product List:</h2>
-    <ul>
+  <div id='list'>
+    <form><table>
+       <thead> <tr><th><b><u>Name</u></b></th><th><b><u>Quantity</u></b></th><th><b><u>Rate for one</u></b></th><th><b><u>Remove</u></b></th></tr></thead><tbody>
       {#each storedProductList as { id, name, quantity, rate }}
-        <li>Name: {name} Quantity: {quantity} Rate for one: {rate} <button on:click={() => remove(id)}>Remove</button></li>
-      {/each}
-    </ul>
-    <button on:click={() => replace("/order")}>Order</button>
+        <tr><td>{name} </td><td>{quantity} </td><td>{rate} </td><td><button on:click={() => remove(id)}>Remove</button></td></tr>
+      {/each}</tbody>
+    </table></form>
+    <button id='order' on:click={() => replace("/order")}>Order</button>
   </div>
-  <h1>Total: {total}</h1>
+  <h1><b>Total: {total}</b></h1>
 {:else}
-  <p>No products stored yet.</p>
+  <p><b>No products stored yet.</b></p>
 {/if}
+</div>
+<style>
+  #total {
+    overflow: auto;
+    background: linear-gradient(to bottom, #d47d19, #a50b58);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #010f01; /* Text color for the entire page */
+  }
+  table th {
+    padding: 8px;
+    font-weight: bold; /* Font weight for table headings */
+  }
+
+  table td {
+    padding: 8px;
+    font-size: medium; /* Font weight for table data */
+  }
+  #list {
+    margin: 20px auto;
+    width: 1000px;
+    padding: 20px;
+    border: 1px solid #031103;
+    border-radius: 5px;
+    background-color: wheat;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: relative; /* Position relative to contain absolutely positioned elements */
+  }
+
+  table {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+
+  table th{
+    padding: 8px;
+  }
+
+  h1 {
+    position: fixed;
+    top: 20px;
+    right: 100px;
+    color: #010f01; /* Text color for the total */
+  }
+
+  button {
+    padding: 8px 16px;
+    background-color: rgb(211, 15, 152);
+    color: wheat;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  button:hover{
+    background-color: green;
+  }
+
+  #order {
+    position: absolute;
+    bottom: -60px; /* Adjusted to position just below the table */
+    right: 20px; /* Aligned to the right of the table container */
+  }
+</style>

@@ -157,7 +157,7 @@ async function fetchProducts() {
     selectedAddress = event.target.value;
   }
 </script>
-
+<div id='total'>
 <Nav /><br><br>
 
 <h1><b>Order details:</b></h1>
@@ -195,17 +195,71 @@ async function fetchProducts() {
       </th>
     </tr>
   </table>
-</form>
+</form></div>
 <style>
-  th{
+  /* General styles */
+  th {
     text-align: center;
     padding: 10px;
   }
-</style>
 
-<!--{#each product_id as id , i}
-          <div>
-          <h1>{id}</h1>
-          <h1>{storedProductList[i].id}</h1></div>
-        {/each}-->
-        
+  /* Form and table styles */
+  form {
+    color: #010f01;
+    margin: 20px auto;
+    width: 80%; /* Adjust width as needed */
+    padding: 20px;
+    border: 1px solid #031103;
+    border-radius: 5px;
+    background-color: wheat;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  table {
+    width: 100%;
+    margin-top: 10px;
+    border-collapse: collapse;
+  }
+
+  table th {
+    padding: 10px;
+    border: 1px solid #ccc;
+  }
+
+  table th {
+    text-align: center;
+    background-color: #f2f2f2; /* Light gray background for headers */
+  }
+
+ 
+  table input[type="radio"] {
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+
+  table input[type="submit"] {
+    padding: 10px 16px;
+    background-color: rgb(182, 37, 134);
+    color: wheat;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  table input[type="submit"]:hover {
+    background-color: #45a049;
+  }
+
+  /* Additional styles */
+  
+
+  #total {overflow: auto;
+    background: linear-gradient(to bottom, #d47d19, #a50b58);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+</style>

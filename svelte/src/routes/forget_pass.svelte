@@ -4,6 +4,9 @@
     let otp = '';
     let dispaly="none";
     $:dispaly:dispaly
+    let odispaly ='block';
+    $:odispaly:odispaly
+    
     let  pass ="";
   
 
@@ -27,6 +30,7 @@
         alert(data.message);}
       else if(data.message == "Email sent successfully"){
         dispaly="block";
+        odispaly='none';
       }  
       else{
         alert("not sent");
@@ -61,6 +65,8 @@
     }
 
 </script>
+<body>
+  
 <h1>please wait until the email recived in your account so that the otp and password form is available</h1>
 <form>
     <table>
@@ -70,12 +76,83 @@
         </th> </tr>
          </table>
 </form>
+<div style="display: {dispaly};">
 <form>
     <table>
-        <div style="display: {dispaly};"><tr><th>otp :</th><input type="text" bind:value={otp}></tr>
+        <tr><th>otp :</th><input type="text" bind:value={otp}></tr>
         <tr><th>new password :</th><th><input type="text" bind:value={pass}></th></tr>
         <tr> <th colspan="2" align="right">
             <button on:click={send_pass}>save pass</button>
-        </th> </tr></div>
+        </th> </tr>
     </table>
-</form>
+</form></div></body>
+<style>
+  body {
+    overflow: auto;
+    background: linear-gradient(to bottom, #d47d19, #a50b58);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+
+h1 {
+    text-align: center;
+    color: #fff;
+    text-decoration: underline;
+    margin-bottom: 20px;
+  }
+
+  form {
+    width: 80%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  th {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+
+  input[type="text"] {
+    width: calc(100% - 20px); /* Adjusted to account for padding */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+button {
+    padding: 10px 20px;
+    background-color: rgb(182, 37, 134);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+
+  button:hover {
+    background-color: #45a049;
+  }
+
+
+</style>

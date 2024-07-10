@@ -1,6 +1,6 @@
 <script>
   import { replace } from 'svelte-spa-router';
-  import Nav from './navigate.svelte';
+  
 
   let products = [];
   let quantity_required = [];
@@ -50,11 +50,10 @@ function  view_product(pid){
 }
 
 </script>
+<body>
 
-<Nav />
-<br>
-<button on:click={() => replace('/cart')} style="position: fixed; top: 30px; right: 190px; padding: 10px 20px">Cart</button>
-<button on:click={() => replace('/history')} style="position: fixed; top: 30px; right: 270px; padding: 10px 20px">Order History</button>
+<button id='cart' on:click={() => replace('/cart')}>Cart</button>
+<button id='order' on:click={() => replace('/history')}>Order History</button>
 <h1>Products:</h1>
 <form>
   <table>
@@ -67,6 +66,7 @@ function  view_product(pid){
         <th>Brand</th>
         <th>Description</th>
         <th>Add to Cart</th>
+        <th>view product</th>
       </tr>
     </thead>
     <tbody>
@@ -89,3 +89,70 @@ function  view_product(pid){
     </tbody>
   </table>
 </form>
+</body><style>
+  h1 {
+    color: rgb(116, 9, 9);
+    text-decoration: underline;
+  }
+
+  #cart,
+  #order {
+    padding: 8px 16px;
+    background-color: rgb(182, 37, 134);
+    color: wheat;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    position: fixed;
+    top: 30px;
+  }
+
+  #cart {
+    right: 220px;
+  }
+
+  #order {
+    right: 290px;
+  }
+
+  #cart:hover,
+  #order:hover {
+    background-color: #45a049; 
+  }
+
+  table {
+    width: 100%;
+    margin: 20px auto; 
+    padding: 20px;
+    border: 1px solid #48d348;
+    border-radius: 5px;
+    background-color: wheat;
+  }
+
+  table th,
+  table td {
+    text-align: center;
+    padding: 8px;
+  }
+
+  table button {
+    padding: 8px 16px;
+    background-color: rgb(182, 37, 134);
+    color: wheat;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  table button:hover {
+    background-color: #45a049; 
+  }
+
+  table input[type="number"] {
+    width: 100px; 
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+</style>
